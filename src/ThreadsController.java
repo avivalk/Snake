@@ -5,9 +5,10 @@ public class ThreadsController extends Thread {
 	ArrayList<ArrayList<DataOfSquare>> Squares = new ArrayList<ArrayList<DataOfSquare>>();
 	Tuple headSnakePos;
 	int sizeSnake = 3;
-	long speed = 50;
+	private long speed;
 	public static int directionSnake;
 	private boolean endGame;
+	private int numBites;
 
 	ArrayList<Tuple> positions = new ArrayList<Tuple>();
 	Tuple foodPosition;
@@ -26,8 +27,15 @@ public class ThreadsController extends Thread {
 
 		foodPosition = new Tuple(Window.height - 1, Window.width - 1);
 		spawnFood(foodPosition);
+		speed = 50;
 		endGame = false;
 
+		numBites = 0;
+
+	}
+
+	public int getNumBites() {
+		return numBites;
 	}
 
 	// Important part :
@@ -38,6 +46,9 @@ public class ThreadsController extends Thread {
 			moveExterne();
 			deleteTail();
 			pauser();
+			if (numBites > 25) {
+				speed = 100;
+			}
 		}
 	}
 
@@ -65,6 +76,7 @@ public class ThreadsController extends Thread {
 				&& posCritique.getY() == foodPosition.x;
 		if (eatingFood) {
 			System.out.println("Yummy!");
+			numBites++;
 			sizeSnake = sizeSnake + 1;
 			foodPosition = getValAleaNotInSnake();
 
@@ -76,7 +88,7 @@ public class ThreadsController extends Thread {
 	private void stopTheGame() {
 		System.out.println("COLLISION! \n");
 		endGame = true;
-		EndGameFrame endGame = new EndGameFrame();
+		EndGameFrame endGame = new EndGameFrame(this);
 		endGame.setVisible(true);
 
 	}
